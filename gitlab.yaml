@@ -1,0 +1,43 @@
+version: '3.3'
+services:
+
+  gitlab.local:
+    image: 'docker.mirrors.ustc.edu.cn/gitlab/gitlab-ee:latest'
+    container_name: gitlab.local
+    hostname: gitlab.local
+    environment:
+      - 'GITLAB_OMNIBUS_CONFIG=external_url ''http://gitlab.local/''; gitlab_rails[''gitlab_shell_ssh_port''] = 6022;'
+      - TZ="Asia/Shanghai"
+    ports:
+      - '443:443'
+      - '80:80'
+      - '6022:22'
+    networks:
+      - gitlab
+    volumes:
+      - 'gitlabcfg:/etc/gitlab'
+      - 'gitlabdata:/var/opt/gitlab'
+    restart: unless-stopped
+
+  gitlab-runner:
+    image: 'docker.mirrors.ustc.edu.cn/gitlab/gitlab-runner:alpine'
+    depends_on:
+      - gitlab.local
+    privileged: true
+    networks:
+      - gitlab
+    volumes:
+      - gitlabrunner:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/bin/docker
+    restart: unless-stopped
+
+volumes:
+  gitlabdata:
+  gitlabcfg:
+  gitlabrunner:
+
+networks:
+  gitlab:
+    external:
+      name: selfhostsrv
