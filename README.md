@@ -5,13 +5,15 @@
 1. gitlab
 2. gitlab-runner
 3. minio
+4. loki
+5. prometheus
+6. grafana
+7. jaeger all in one
+8. netdata
 
 ## TODO
 
-- opentracing
-- prometheus
-- grafana
-- loki
+- k3s
 
 ## Usages
 
@@ -35,28 +37,13 @@ TODO: 如何验证多个 服务是在同一个网络
 ### cmd
 
 ```
-docker network create selfhostsrv
-
-docker-compose -f minio.yaml up -d
-```
-
-#### 安装 gitlab
-
-```
-docker-compose -f gitlab.yaml up -d
-
-```
-
-访问 gitlab `http://localhost:80`
-
-```sh
-docker-compose exec gitlab-runner gitlab-runner register
-
-docker-compose -f gitlab.yaml exec gitlab-runner gitlab-runner register \
---non-interactive \
---url http://gitlab.local/ \
---registration-token fHRvUfPyzmD9J-rsby3q \
---executor docker \
---docker-image alpine:3 \
---docker-network-mode selfhostsrv
+make dep
+make minio
+make gitlab
+make registry
+make grafana
+make loki
+make netdata
+make prometheus
+make opentracing
 ```

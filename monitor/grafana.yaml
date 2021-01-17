@@ -1,0 +1,18 @@
+version: '3.5'
+services:
+  # https://grafana.com/docs/loki/latest/getting-started/grafana/
+  # https://grafana.com/docs/loki/latest/logql/
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana.local
+    hostname: grafana.local
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    ports:
+      - "3000:3000"
+
+networks:
+  default:
+    external:
+      name: selfhostsrv

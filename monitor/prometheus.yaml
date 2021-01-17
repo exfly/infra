@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+  prometheus:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    container_name: prometheus.local
+    hostname: prometheus.local
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+
+volumes:
+  prom_data:
+
+networks:
+  default:
+    external:
+      name: selfhostsrv

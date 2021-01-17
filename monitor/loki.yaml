@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+  loki:
+    image: grafana/loki:2.0.0
+    command: -config.file=/etc/loki/local-config.yaml
+    container_name: loki.local
+    hostname: loki.local
+    ports:
+      - "3100:3100"
+
+  promtail:
+    image: grafana/promtail:2.0.0
+    command: -config.file=/etc/promtail/config.yml
+    container_name: promtail.local
+    hostname: promtail.local
+    volumes:
+      - /var/log:/var/log
+
+networks:
+  default:
+    external:
+      name: selfhostsrv
