@@ -1,6 +1,22 @@
 version: '3.5'
 
+services:
+  tail:
+    image: alpine
+    container_name: tail
+    command: tail -f /dev/null
+    networks:
+      - selfhostsrv
+    restart: unless-stopped
+
+  skopeo:
+    image: exfly/skopeo:alpine
+    command: tail -f /dev/null
+    volumes:
+    - .:/output
+    - /var/run/docker.sock:/var/run/docker.sock
+
 networks:
-  default:
+  selfhostsrv:
     driver: bridge
     name: selfhostsrv

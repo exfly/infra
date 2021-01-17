@@ -1,0 +1,6 @@
+# docker build -f Dockerfile.skopeo -t exfly/skopeo:alpine .
+FROM alpine:latest
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN apk add --no-cache skopeo

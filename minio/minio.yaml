@@ -1,0 +1,28 @@
+version: '3.5'
+services:
+  minio:
+    image: docker.mirrors.ustc.edu.cn/minio/minio
+    hostname: minio.local
+    container_name: minio.local
+    environment:
+      - MINIO_ROOT_USER=72650fcd8776f147a9d9d782f2d5e816
+      - MINIO_ROOT_PASSWORD=40d898348deafefc6b0e0d4b01d750ac
+    command: server /data
+    ports:
+      - '9000:9000'
+    volumes:
+      - 'miniodata:/data'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  miniodata:
+
+networks:
+  default:
+    external:
+      name: selfhostsrv

@@ -1,0 +1,18 @@
+version: '3.5'
+services:
+  registry:
+    hostname: registry.local
+    container_name: registry.local
+    image: registry:2
+    volumes:
+      - 'registry:/var/lib/registry/docker/registry'
+    ports:
+    - 5000:5000
+
+volumes:
+  registry:
+
+networks:
+  default:
+    external:
+      name: selfhostsrv
