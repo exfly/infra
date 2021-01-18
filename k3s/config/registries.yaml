@@ -1,0 +1,13 @@
+# https://rancher.com/docs/k3s/latest/en/installation/private-registry/
+mirrors:
+  "registry:5000":
+    endpoint:
+      - "http://registry:5000"
+  docker.io:
+    endpoint:
+      - "http://registry:5000"
+
+configs:
+  "registry:5000":
+    tls:
+      insecure_skip_verify: true

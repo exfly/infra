@@ -5,34 +5,38 @@ dep:
 	${docker} network create selfhostsrv || true
 .PHONY: dep
 
-minio:
+base:
+	${docker-compose} up -d
+.PHONY: base
+
+minio: base
 	${docker-compose} -f minio/minio.yaml up -d
 .PHONY: minio
 
-gitlab:
+gitlab: base
 	${docker-compose} -f gitlab/gitlab.yaml up -d
 .PHONY: gitlab
 
-registry:
+registry: base
 	${docker-compose} -f registry/registry.yml up -d
 .PHONY: registry
 
-grafana:
+grafana: base
 	${docker-compose} -f monitor/grafana.yaml up -d
 .PHONY: grafana
 
-loki: grafana
+loki: base grafana
 	docker-compose -f monitor/loki.yaml up -d
 .PHONY: loki
 
-netdata:
+netdata: base
 	${docker-compose} -f monitor/netdata.yaml up -d
 .PHONY: netdata
 
-prometheus: grafana
+prometheus: base grafana
 	${docker-compose} -f monitor/prometheus.yaml up -d
 .PHONY: prometheus
 
-opentracing:
+opentracing: base
 	${docker-compose} -f monitor/opentracing.yaml up -d
 .PHONY: opentracing

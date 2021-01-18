@@ -1,0 +1,45 @@
+version: '3.5'
+services:
+  server:
+    hostname: server
+    image: "rancher/k3s:${K3S_VERSION:-latest}"
+    command: server --no-deploy traefik
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_TOKEN=${K3S_TOKEN:?err}
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    volumes:
+    - k3s-server:/var/lib/rancher/k3s
+    # This is just so that we get the kubeconfig file out
+    - .:/output
+    - ./config/registries.yaml:/etc/rancher/k3s/registries.yaml
+    - ./airgap/k3s-${K3S_VERSION:-latest}-airgap-images-amd64.tar:/var/lib/rancher/k3s/agent/images/airgap/k3s-airgap-images-amd64.tar
+    ports:
+    - 6443:6443
+
+  agent:
+    hostname: agent
+    image: "rancher/k3s:${K3S_VERSION:-latest}"
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://server:6443
+    - K3S_TOKEN=${K3S_TOKEN:?err}
+    volumes:
+      - .:/output
+      - ./config/registries.yaml:/etc/rancher/k3s/registries.yaml
+      - ./airgap/k3s-${K3S_VERSION:-latest}-airgap-images-amd64.tar:/var/lib/rancher/k3s/agent/images/airgap/k3s-airgap-images-amd64.tar
+
+volumes:
+  k3s-server: {}
+
+networks:
+  default:
+    external:
+      name: selfhostsrv

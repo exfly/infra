@@ -1,0 +1,7 @@
+actant
+bin
+airgap
+/pv/
+kubeconfig.yaml
+/crd-demo/
+*_generated.yaml
