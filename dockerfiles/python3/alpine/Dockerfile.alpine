@@ -1,0 +1,24 @@
+# pipenv lock -r > requirements.pip.txt 
+# docker build -t ansible -f Dockerfile.mini .
+FROM python:3.9-alpine as base
+FROM base as builder
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# https://stackoverflow.com/questions/30624829/no-such-file-or-directory-limits-h-when-installing-pillow-on-alpine-linux
+# https://stackoverflow.com/questions/58393840/fatal-error-ffi-h-no-such-file-or-directory-on-pip2-install-pyopenssl
+RUN apk add --no-cache git openssh-client gcc musl-dev libressl-dev libffi-dev 
+
+RUN mkdir /install
+WORKDIR /install
+COPY requirements.txt /requirements.txt
+
+RUN pip install --upgrade pip \
+	&& pip install --no-cache-dir --trusted-host mirrors.aliyun.com cryptography \
+	&& CRYPTOGRAPHY_DONT_BUILD_RUST=1 pip install --no-cache-dir --trusted-host mirrors.aliyun.com --prefix=/install -r /requirements.txt
+
+# FROM gcr.io/distroless/python3
+FROM base
+COPY --from=builder /install /usr/local
+WORKDIR /app
+COPY hello.py /app/
+
+CMD ["hello.py", "/etc"]
