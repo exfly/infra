@@ -4,12 +4,12 @@ FROM python:3.9-slim as base
 FROM base as builder
 RUN mkdir /install
 WORKDIR /install
-COPY requirements.pip.txt /requirements.txt
+COPY requirements.txt /requirements.txt
 RUN sed -E -i -e 's/deb.debian.org/mirrors.aliyun.com/g' -e 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 RUN apt update --allow-insecure-repositories \
 	&& apt install -y gcc python3.9-dev libffi-dev -y
 
-RUN pip install --trusted-host mirrors.aliyun.com --prefix=/install -r /requirements.txt
+RUN pip install --no-cache-dir --trusted-host mirrors.aliyun.com --prefix=/install -r /requirements.txt
 
 # FROM gcr.io/distroless/python3
 FROM base
